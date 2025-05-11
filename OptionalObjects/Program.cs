@@ -1,70 +1,73 @@
-﻿Person p1 = Person.Create("Roman", "Mikula");
-Person p2 = Person.Create("Monika");
-Person? p3 = null;
+﻿
 
-Book faust = Book.Create("Doctor faustus", p1);
-Book retorika = Book.Create("Retorika", p2);
-Book nights = Book.Create("Tisic a jedna noc");
+using Optional;
+using OptionalObjects.Models;
 
-Console.WriteLine(GetBookLabel(faust));
-Console.WriteLine(GetBookLabel(retorika));
-Console.WriteLine(GetBookLabel(nights));
+Person mann = Person.Create("Thomas", "Mann");
+Person aristotle = Person.Create("Aristotle");
+Person austen = Person.Create("Jane", "Austen");
+Person asimov = Person.Create("Isaac", "Asimov");
+Person marukami = Person.Create("Haruki", "Murakami");
 
-string GetBookLabel(Book book)
+Book faustus = Book.Create("Doctor Faustus", mann);
+Book rhetoric = Book.Create("Rhetoric", aristotle);
+Book nights = Book.Create("One Thousand and One Nights");
+Book foundation = Book.Create("Foundation", asimov);
+Book robots = Book.Create("I, Robot", asimov);
+Book pride = Book.Create("Pride and Prejudice", austen);
+Book mahabharata = Book.Create("Mahabharata");
+Book windup = Book.Create("Windup Bird Chronicle", marukami);
+
+IEnumerable<Book> library = new[] { faustus, rhetoric, nights, foundation, robots, pride, mahabharata, windup };
+
+var bookshelf = library
+    .GroupBy(GetAuthorInitial)
+    .OrderBy(group => group.Key.Reduce(string.Empty));
+
+foreach (var group in bookshelf)
 {
-    return book
-        .Author
-        .Map(GetLabel)
-        .Map(author => $"{book.Title} by {author}")
-        .Reduce(book.Title);
+    string header = group.Key.Map(initial => $"[ {initial} ]").Reduce("[   ]");
+    foreach (var book in group)
+    {
+        Console.WriteLine($"{header} -> {book}");
+        header = "     ";
+    }
 }
 
-string GetLabel(Person person)
+Console.WriteLine(new string('-', 40));
+
+var authorNameLengths = library
+    .GroupBy(GetAuthorNameLength)
+    .OrderBy(group => group.Key.Reduce(0));
+
+foreach (var group in authorNameLengths)
 {
-    return person
-        .LastName
+    string header = group.Key.Map(length => $"[ {length,2} ]").Reduce("[    ]");
+    foreach (var book in group)
+    {
+        Console.WriteLine($"{header} -> {book}");
+        header = "      ";
+    }
+}
+
+ValueOption<int> GetAuthorNameLength(Book book) =>
+    book.Author.Map(GetName).MapValue(s => s.Length);
+
+string GetName(Person person) =>
+    person.LastName
         .Map(lastName => $"{person.FirstName} {lastName}")
         .Reduce(person.FirstName);
-}
 
-
-public class Person
+Option<string> GetAuthorInitial(Book book)
 {
-    public string FirstName { get; }
-    public Option<string> LastName { get; }
-
-    private Person(string firstName, Option<string> lastName)
-    {
-        FirstName = firstName;
-        LastName = lastName;
-    }
-
-    public static Person Create(string firstName, string lastName) =>
-        new Person(firstName, Option<string>.Some(lastName));
-
-    public static Person Create(string firstName) =>
-        new Person(firstName, Option<string>.None);
+    return book.Author.MapOptional(GetPersonInitial);
 }
 
+Option<string> GetPersonInitial(Person person) =>
+    person.LastName
+        .MapValue(GetInitial)
+        .Reduce(() => GetInitial(person.FirstName));
 
-public class Book
-{
-    public string Title { get; }
-    public Option<Person> Author { get; }
-
-    private Book(string title, Option<Person> author)
-    {
-        Title = title;
-        Author = author;
-    }
-
-    public static Book Create(string title, Person author)
-    {
-        return new Book(title: title, author: Option<Person>.Some(author));
-    }
-
-    public static Book Create(string title)
-    {
-        return new Book(title: title, author: Option<Person>.None);
-    }
-}
+Option<string> GetInitial(string name) =>
+    name.WhereNot(string.IsNullOrWhiteSpace)
+        .Map(s => s.TrimStart()[..1].ToUpper());
