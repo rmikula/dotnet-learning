@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RolesAndEntityFramework", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Optional", "Optional\Optional.csproj", "{B1AD977A-9CBC-40A7-A2AA-198F9570BA67}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicesLoggingActivatorUtilitiesInConsoleApp", "ServicesLoggingActivatorUtilitiesInConsoleApp\ServicesLoggingActivatorUtilitiesInConsoleApp.csproj", "{4821E0E8-58E8-400B-8920-2C8158141D78}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{B1AD977A-9CBC-40A7-A2AA-198F9570BA67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1AD977A-9CBC-40A7-A2AA-198F9570BA67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1AD977A-9CBC-40A7-A2AA-198F9570BA67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4821E0E8-58E8-400B-8920-2C8158141D78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4821E0E8-58E8-400B-8920-2C8158141D78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4821E0E8-58E8-400B-8920-2C8158141D78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4821E0E8-58E8-400B-8920-2C8158141D78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
